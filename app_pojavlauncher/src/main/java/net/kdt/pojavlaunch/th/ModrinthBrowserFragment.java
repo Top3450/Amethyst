@@ -60,6 +60,13 @@ public class ModrinthBrowserFragment extends Fragment {
         LinearLayout root = new LinearLayout(requireContext());
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(12), dp(12), dp(12), dp(4));
+        // opaque + touch-absorbing so the main menu underneath never shows through or gets taps
+        android.util.TypedValue tv = new android.util.TypedValue();
+        boolean hasBg = requireContext().getTheme().resolveAttribute(android.R.attr.colorBackground, tv, true)
+                && tv.type >= android.util.TypedValue.TYPE_FIRST_COLOR_INT && tv.type <= android.util.TypedValue.TYPE_LAST_COLOR_INT;
+        root.setBackgroundColor(hasBg ? (tv.data | 0xFF000000) : 0xFF1B1B1B);
+        root.setClickable(true);
+        root.setFocusable(true);
 
         TextView title = new TextView(requireContext());
         title.setText("📦 ม็อดจาก Modrinth");
@@ -143,8 +150,12 @@ public class ModrinthBrowserFragment extends Fragment {
         });
     }
 
+    /** Mods Amethyst does not support (Sodium and the mods built on top of it). */
+    private static final java.util.Set<String> UNSUPPORTED = new HashSet<>(Arrays.asList(
+            "sodium", "iris", "sodium-extra", "reeses-sodium-options", "indium", "embeddium", "rubidium", "oculus", "sodiumdynamiclights"));
+
     private void addRow(JSONObject hit) {
-        if (hit == null) return;
+        if (hit == null || UNSUPPORTED.contains(hit.optString("slug"))) return;
         LinearLayout row = new LinearLayout(requireContext());
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
