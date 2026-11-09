@@ -97,6 +97,8 @@ public class MainMenuFragment extends Fragment {
         });
 
 
+        view.findViewById(R.id.th_tools_button).setOnClickListener(v -> net.kdt.pojavlaunch.th.ThTools.showMenu(requireActivity()));
+
         mNewsButton.setOnLongClickListener((v)->{
             Tools.swapFragment(requireActivity(), GamepadMapperFragment.class, GamepadMapperFragment.TAG, null);
             return true;
